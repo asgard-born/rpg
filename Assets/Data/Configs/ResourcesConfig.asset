@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aec8afcc903488f439a8a782211ebe50, type: 3}
   m_Name: ResourcesConfig
   m_EditorClassIdentifier: 
-  CharacterPrefab:
-    m_AssetGUID: 
+  CharacterViewReference:
+    m_AssetGUID: e26f1fc2d83242e46be9f01844193863
     m_SubObjectName: 
     m_SubObjectType: 
     m_SubObjectGUID: 
