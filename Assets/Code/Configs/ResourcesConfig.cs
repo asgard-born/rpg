@@ -6,6 +6,6 @@ namespace Configs
     [CreateAssetMenu(fileName = "ResourcesConfig", menuName = "Configs/Resources_Config")]
     public class ResourcesConfig : ScriptableObject
     {
-        public AssetReference CharacterPrefab;
+        public AssetReference CharacterViewReference;
     }
 }
