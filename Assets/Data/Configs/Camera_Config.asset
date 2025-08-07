@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MovingSpeed: 10
   VerticalStep: 0.6
-  MaxHeight: 12
-  MinHeight: 6
-  CheckingSphereRadius: 5
-  VerticalSmoothTime: 0.3
-  MaxDistanceFromPlayerXZ: 16
+  MaxHeight: 14
+  MinHeight: 7
+  CheckingSphereRadius: 10
+  VerticalSmoothTime: 0.2
+  MaxDistanceFromPlayerXZ: 25
