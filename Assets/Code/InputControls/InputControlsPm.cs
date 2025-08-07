@@ -22,10 +22,10 @@ namespace InputControls
         public InputControlsPm(Ctx ctx)
         {
             _ctx = ctx;
-            AddUnsafe(Observable.EveryUpdate().Subscribe(CheckForInput));
+            AddUnsafe(Observable.EveryUpdate().Subscribe(_ => CheckForInput()));
         }
 
-        private void CheckForInput(long _)
+        private void CheckForInput()
         {
             if (Input.GetMouseButtonDown(0))
             {

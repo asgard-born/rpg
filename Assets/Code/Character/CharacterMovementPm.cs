@@ -27,7 +27,7 @@ namespace Character
             _ctx.NavMeshAgent.speed = _ctx.RunningSpeed;
 
             AddUnsafe(_ctx.RawMovePoint.Subscribe(TryMoveToPoint));
-            AddUnsafe(Observable.Interval(System.TimeSpan.FromSeconds(CHECK_INTERVAL)).Subscribe(CheckDestinationReached));
+            AddUnsafe(Observable.Interval(System.TimeSpan.FromSeconds(CHECK_INTERVAL)).Subscribe(_ => CheckDestinationReached()));
         }
 
         private void TryMoveToPoint(Vector3 target)
@@ -44,7 +44,7 @@ namespace Character
             }
         }
 
-        private void CheckDestinationReached(long _)
+        private void CheckDestinationReached()
         {
             if (!_isRunning) return;
 

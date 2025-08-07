@@ -126,9 +126,12 @@ namespace Root
             {
                 Config = _ctx.NavigationConfig,
                 Camera = camera,
+                NavigationMarker = _ctx.ResourcesConfig.NavigationMarkerPrefab,
 
+                RawMovePoint = _rawMovePoint,
                 OnLeftMouseButtonDown = _onLeftMouseButtonDown,
-                RawMovePoint = _rawMovePoint
+                OnStartMovingToTarget = _onStartMovingToTarget,
+                OnTargetReached = _onTargetReached
             }));
         }
     }

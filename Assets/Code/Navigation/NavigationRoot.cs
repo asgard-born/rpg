@@ -13,9 +13,12 @@ namespace Navigation
         {
             public Camera Camera;
             public NavigationConfig Config;
+            public NavigationMarker NavigationMarker;
             
             public ReactiveCommand<Vector3> OnLeftMouseButtonDown;
             public ReactiveProperty<Vector3> RawMovePoint;
+            public ReactiveCommand<Vector3> OnStartMovingToTarget;
+            public ReactiveCommand OnTargetReached;
         }
 
         public NavigationRoot(Ctx ctx)
@@ -31,8 +34,11 @@ namespace Navigation
             {
                 Config = _ctx.Config,
                 Camera = _ctx.Camera,
+                NavigationMarker = _ctx.NavigationMarker,
+                RawMovePoint = _ctx.RawMovePoint,
                 OnLeftMouseButtonDown = _ctx.OnLeftMouseButtonDown,
-                RawMovePoint = _ctx.RawMovePoint
+                OnStartMovingToTarget = _ctx.OnStartMovingToTarget,
+                OnTargetReached = _ctx.OnTargetReached
             }));
         }
     }

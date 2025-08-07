@@ -9,6 +9,6 @@ namespace Configs
     {
         public AssetReference CharacterViewReference;
         public AssetReference CameraViewReference;
-        public NavigationArrows NavigationArrowsPrefab;
+        public NavigationMarker NavigationMarkerPrefab;
     }
 }
