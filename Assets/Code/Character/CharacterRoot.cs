@@ -10,17 +10,16 @@ namespace Character
 {
     public class CharacterRoot : BaseDisposable
     {
-        private Ctx _ctx;
+        private readonly Ctx _ctx;
         private CharacterView _view;
 
         public struct Ctx
         {
             public AssetReference ViewReference;
-            public Transform SpawnPoint;
+            public Transform CharacterSpawnPoint;
             public float RunningSpeed;
 
-            public ReactiveProperty<Vector3> WorldPointProperty;
-            public ReactiveCommand<Vector3> OnTargetSelected;
+            public ReactiveProperty<Vector3> RawMovePoint;
             public ReactiveCommand OnTargetReached;
         }
 
@@ -41,7 +40,7 @@ namespace Character
         private async UniTask CreateViewAsync()
         {
             CharacterView prefab = await LoadAndTrackPrefab<CharacterView>(_ctx.ViewReference);
-            _view = Object.Instantiate(prefab, _ctx.SpawnPoint.position, _ctx.SpawnPoint.rotation);
+            _view = Object.Instantiate(prefab, _ctx.CharacterSpawnPoint.position, _ctx.CharacterSpawnPoint.rotation);
         }
 
         private void InitializeMovements()
@@ -59,8 +58,7 @@ namespace Character
                 RunningSpeed = _ctx.RunningSpeed,
                 NavMeshAgent = navMeshAgent,
 
-                WorldPointProperty = _ctx.WorldPointProperty,
-                OnTargetSelected = _ctx.OnTargetSelected,
+                RawMovePoint = _ctx.RawMovePoint,
                 OnTargetReached = _ctx.OnTargetReached
             }));
         }

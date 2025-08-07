@@ -2,6 +2,7 @@
 using Cysharp.Threading.Tasks;
 using Extensions;
 using UniRx;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 
@@ -11,13 +12,16 @@ namespace CameraLogic
     {
         private readonly Ctx _ctx;
         private CameraView _view;
+        private Camera _camera;
 
         public class Ctx
         {
             public CameraConfig CameraConfig;
+            public LayerMask GroundLayer;
             public Transform CameraSpawnPoint;
             public AssetReference ViewReference;
 
+            public ReactiveCommand<Camera> OnCameraInitialized;
             public ReactiveCommand OnPressedKeyW;
             public ReactiveCommand OnPressedKeyA;
             public ReactiveCommand OnPressedKeyS;
@@ -29,7 +33,6 @@ namespace CameraLogic
         public CameraRoot(Ctx ctx)
         {
             _ctx = ctx;
-
             InitializeAsync().Forget(ex => Debug.LogError($"{GetType().Name} Error: {ex}"));
         }
 
@@ -37,12 +40,21 @@ namespace CameraLogic
         {
             await CreateViewAsync();
             InitializePm();
+            _ctx.OnCameraInitialized?.Execute(_camera);
         }
 
         private async UniTask CreateViewAsync()
         {
             var cameraPrefab = await LoadAndTrackPrefab<CameraView>(_ctx.ViewReference);
             _view = Object.Instantiate(cameraPrefab, _ctx.CameraSpawnPoint.position, _ctx.CameraSpawnPoint.rotation);
+
+            _camera = _view.GetComponent<Camera>();
+
+            if (_camera == null)
+            {
+                Debug.LogError("Camera component is null");
+                _camera = _view.AddComponent<Camera>();
+            }
         }
 
         private void InitializePm()
@@ -50,6 +62,7 @@ namespace CameraLogic
             AddUnsafe(new CameraMovementPm(new CameraMovementPm.Ctx
             {
                 Config = _ctx.CameraConfig,
+                GroundLayer = _ctx.GroundLayer,
                 Transform = _view.transform,
                 OnPressedKeyW = _ctx.OnPressedKeyW,
                 OnPressedKeyA = _ctx.OnPressedKeyA,

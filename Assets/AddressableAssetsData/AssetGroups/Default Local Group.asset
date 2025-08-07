@@ -15,6 +15,11 @@ MonoBehaviour:
   m_GroupName: Default Local Group
   m_GUID: 5ba186e968c806149b68d019f24180b9
   m_SerializeEntries:
+  - m_GUID: 0efb8875caabf3846ac5141bb447a2f9
+    m_Address: Assets/Data/Prefabs/CameraView.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: e26f1fc2d83242e46be9f01844193863
     m_Address: Assets/Data/Prefabs/CharacterView.prefab
     m_ReadOnly: 0

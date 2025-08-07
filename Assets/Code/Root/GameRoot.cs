@@ -3,6 +3,7 @@ using Character;
 using Configs;
 using Extensions;
 using InputControls;
+using Navigation;
 using UniRx;
 using UnityEngine;
 
@@ -11,11 +12,10 @@ namespace Root
     public class GameRoot : BaseDisposable
     {
         private readonly Ctx _ctx;
-        private ReactiveProperty<Vector3> _worldPointProperty;
 
         #region Controls
 
-        private ReactiveCommand _onLeftMouseButtonDown;
+        private ReactiveCommand<Vector3> _onLeftMouseButtonDown;
         private ReactiveCommand _onScrollDown;
         private ReactiveCommand _onScrollUp;
         private ReactiveCommand _onPressedKeyW;
@@ -25,8 +25,9 @@ namespace Root
 
         #endregion
 
-        private ReactiveCommand<Vector3> _onTargetSelected;
+        private ReactiveProperty<Vector3> _rawMovePoint;
         private ReactiveCommand _onTargetReached;
+        private ReactiveCommand<Camera> _onCameraInitialized;
 
         public class Ctx
         {
@@ -36,6 +37,7 @@ namespace Root
             
             public Transform CharacterSpawnPoint;
             public Transform CameraSpawnPoint;
+            public NavigationConfig NavigationConfig;
         }
 
         public GameRoot(Ctx ctx)
@@ -50,9 +52,7 @@ namespace Root
 
         private void InitializeRx()
         {
-            _worldPointProperty = AddUnsafe(new ReactiveProperty<Vector3>());
-
-            _onLeftMouseButtonDown = AddUnsafe(new ReactiveCommand());
+            _onLeftMouseButtonDown = AddUnsafe(new ReactiveCommand<Vector3>());
             _onScrollDown = AddUnsafe(new ReactiveCommand());
             _onScrollUp = AddUnsafe(new ReactiveCommand());
             _onPressedKeyW = AddUnsafe(new ReactiveCommand());
@@ -60,8 +60,11 @@ namespace Root
             _onPressedKeyS = AddUnsafe(new ReactiveCommand());
             _onPressedKeyD = AddUnsafe(new ReactiveCommand());
 
-            _onTargetSelected = AddUnsafe(new ReactiveCommand<Vector3>());
+            _rawMovePoint = AddUnsafe(new ReactiveProperty<Vector3>());
             _onTargetReached = AddUnsafe(new ReactiveCommand());
+            _onCameraInitialized = AddUnsafe(new ReactiveCommand<Camera>());
+
+            AddUnsafe(_onCameraInitialized.Subscribe(InitializeNavigation));
         }
 
         private void InitializeControls()
@@ -88,8 +91,9 @@ namespace Root
                     ViewReference = _ctx.ResourcesConfig.CharacterViewReference,
                     CharacterSpawnPoint = _ctx.CharacterSpawnPoint,
                     RunningSpeed = _ctx.CharacterConfig.RunningSpeed,
-
-                    WorldPointProperty = _worldPointProperty,
+                    
+                    RawMovePoint = _rawMovePoint,
+                    OnTargetReached = _onTargetReached,
                 }));
         }
 
@@ -99,9 +103,11 @@ namespace Root
                 new CameraRoot.Ctx
                 {
                     CameraConfig = _ctx.CameraConfig,
+                    GroundLayer = _ctx.NavigationConfig.GroundLayer,
                     CameraSpawnPoint = _ctx.CameraSpawnPoint,
                     ViewReference = _ctx.ResourcesConfig.CameraViewReference,
                     
+                    OnCameraInitialized = _onCameraInitialized,
                     OnPressedKeyW = _onPressedKeyW,
                     OnPressedKeyA = _onPressedKeyA,
                     OnPressedKeyS = _onPressedKeyS,
@@ -109,6 +115,18 @@ namespace Root
                     OnScrollUp = _onScrollUp,
                     OnScrollDown = _onScrollDown,
                 }));
+        }
+
+        private void InitializeNavigation(Camera camera)
+        {
+            AddUnsafe(new NavigationRoot(new NavigationRoot.Ctx
+            {
+                Config = _ctx.NavigationConfig,
+                Camera = camera,
+                
+                OnLeftMouseButtonDown = _onLeftMouseButtonDown,
+                RawMovePoint = _rawMovePoint
+            }));
         }
     }
 }

@@ -15,6 +15,7 @@ namespace CameraLogic
         public class Ctx
         {
             public CameraConfig Config;
+            public LayerMask GroundLayer;
             public Transform Transform;
 
             public ReactiveCommand OnPressedKeyW;
@@ -74,7 +75,7 @@ namespace CameraLogic
 
         private Vector3 FindGroundPoint()
         {
-            if (Physics.Raycast(_ctx.Transform.position, Vector3.down, out RaycastHit hit, _ctx.Config.RayDistance, _ctx.Config.GroungMask))
+            if (Physics.Raycast(_ctx.Transform.position, Vector3.down, out RaycastHit hit, _ctx.Config.RayDistance, _ctx.GroundLayer))
             {
                 return hit.point;
             }
