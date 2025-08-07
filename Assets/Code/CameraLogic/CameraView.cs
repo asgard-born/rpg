@@ -2,8 +2,8 @@
 
 namespace CameraLogic
 {
-    public class CameraView: MonoBehaviour
+    [RequireComponent(typeof(Camera))]
+    public class CameraView : MonoBehaviour
     {
-        
     }
 }

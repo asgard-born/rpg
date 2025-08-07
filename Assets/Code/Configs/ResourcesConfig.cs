@@ -7,5 +7,6 @@ namespace Configs
     public class ResourcesConfig : ScriptableObject
     {
         public AssetReference CharacterViewReference;
+        public AssetReference CameraViewReference;
     }
 }

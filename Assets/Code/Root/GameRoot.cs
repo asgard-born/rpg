@@ -11,8 +11,6 @@ namespace Root
     public class GameRoot : BaseDisposable
     {
         private readonly Ctx _ctx;
-
-        private ReactiveProperty<Camera> _cameraProperty;
         private ReactiveProperty<Vector3> _worldPointProperty;
 
         #region Controls
@@ -34,7 +32,10 @@ namespace Root
         {
             public ResourcesConfig ResourcesConfig;
             public CharacterConfig CharacterConfig;
-            public Transform SpawnPoint;
+            public CameraConfig CameraConfig;
+            
+            public Transform CharacterSpawnPoint;
+            public Transform CameraSpawnPoint;
         }
 
         public GameRoot(Ctx ctx)
@@ -49,7 +50,6 @@ namespace Root
 
         private void InitializeRx()
         {
-            _cameraProperty = AddUnsafe(new ReactiveProperty<Camera>());
             _worldPointProperty = AddUnsafe(new ReactiveProperty<Vector3>());
 
             _onLeftMouseButtonDown = AddUnsafe(new ReactiveCommand());
@@ -71,12 +71,12 @@ namespace Root
                     new InputControlsPm.Ctx
                     {
                         OnLeftMouseButtonDown = _onLeftMouseButtonDown,
-                        OnScrollDown = _onScrollDown,
-                        OnScrollUp = _onScrollUp,
                         OnPressedKeyW = _onPressedKeyW,
                         OnPressedKeyA = _onPressedKeyA,
                         OnPressedKeyS = _onPressedKeyS,
-                        OnPressedKeyD = _onPressedKeyD
+                        OnPressedKeyD = _onPressedKeyD,
+                        OnScrollUp = _onScrollUp,
+                        OnScrollDown = _onScrollDown,
                     }));
         }
 
@@ -86,7 +86,7 @@ namespace Root
                 new CharacterRoot.Ctx
                 {
                     ViewReference = _ctx.ResourcesConfig.CharacterViewReference,
-                    SpawnPoint = _ctx.SpawnPoint,
+                    CharacterSpawnPoint = _ctx.CharacterSpawnPoint,
                     RunningSpeed = _ctx.CharacterConfig.RunningSpeed,
 
                     WorldPointProperty = _worldPointProperty,
@@ -98,10 +98,16 @@ namespace Root
             AddUnsafe(new CameraRoot(
                 new CameraRoot.Ctx
                 {
+                    CameraConfig = _ctx.CameraConfig,
+                    CameraSpawnPoint = _ctx.CameraSpawnPoint,
+                    ViewReference = _ctx.ResourcesConfig.CameraViewReference,
+                    
                     OnPressedKeyW = _onPressedKeyW,
                     OnPressedKeyA = _onPressedKeyA,
                     OnPressedKeyS = _onPressedKeyS,
-                    OnPressedKeyD = _onPressedKeyD
+                    OnPressedKeyD = _onPressedKeyD,
+                    OnScrollUp = _onScrollUp,
+                    OnScrollDown = _onScrollDown,
                 }));
         }
     }
