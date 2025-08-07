@@ -17,9 +17,10 @@ namespace CameraLogic
         public class Ctx
         {
             public CameraConfig CameraConfig;
+            public AssetReference ViewReference;
             public LayerMask GroundLayer;
             public Transform CameraSpawnPoint;
-            public AssetReference ViewReference;
+            public Transform CharacterTransform;
 
             public ReactiveCommand<Camera> OnCameraInitialized;
             public ReactiveCommand OnPressedKeyW;
@@ -63,7 +64,9 @@ namespace CameraLogic
             {
                 Config = _ctx.CameraConfig,
                 GroundLayer = _ctx.GroundLayer,
-                Transform = _view.transform,
+                CameraTransform = _view.transform,
+                CharacterTransform = _ctx.CharacterTransform,
+                
                 OnPressedKeyW = _ctx.OnPressedKeyW,
                 OnPressedKeyA = _ctx.OnPressedKeyA,
                 OnPressedKeyS = _ctx.OnPressedKeyS,

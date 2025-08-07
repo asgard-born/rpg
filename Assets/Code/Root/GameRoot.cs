@@ -28,6 +28,7 @@ namespace Root
         private ReactiveProperty<Vector3> _rawMovePoint;
         private ReactiveCommand<Vector3> _onStartMovingToTarget;
         private ReactiveCommand _onTargetReached;
+        private ReactiveCommand<Transform> _onCharacterInitialized;
         private ReactiveCommand<Camera> _onCameraInitialized;
 
         public class Ctx
@@ -48,7 +49,6 @@ namespace Root
             InitializeRx();
             InitializeControls();
             InitializeCharacter();
-            InitializeCamera();
         }
 
         private void InitializeRx()
@@ -64,8 +64,10 @@ namespace Root
             _rawMovePoint = AddUnsafe(new ReactiveProperty<Vector3>());
             _onStartMovingToTarget = AddUnsafe(new ReactiveCommand<Vector3>());
             _onTargetReached = AddUnsafe(new ReactiveCommand());
+            _onCharacterInitialized = AddUnsafe(new ReactiveCommand<Transform>());
             _onCameraInitialized = AddUnsafe(new ReactiveCommand<Camera>());
 
+            AddUnsafe(_onCharacterInitialized.Subscribe(InitializeCamera));
             AddUnsafe(_onCameraInitialized.Subscribe(InitializeNavigation));
         }
 
@@ -95,20 +97,22 @@ namespace Root
                     RunningSpeed = _ctx.CharacterConfig.RunningSpeed,
 
                     RawMovePoint = _rawMovePoint,
+                    OnCharacterInitialized = _onCharacterInitialized,
                     OnStartMovingToTarget = _onStartMovingToTarget,
                     OnTargetReached = _onTargetReached,
                 }));
         }
 
-        private void InitializeCamera()
+        private void InitializeCamera(Transform characterTransform)
         {
             AddUnsafe(new CameraRoot(
                 new CameraRoot.Ctx
                 {
+                    ViewReference = _ctx.ResourcesConfig.CameraViewReference,
                     CameraConfig = _ctx.CameraConfig,
                     GroundLayer = _ctx.NavigationConfig.GroundLayer,
                     CameraSpawnPoint = _ctx.CameraSpawnPoint,
-                    ViewReference = _ctx.ResourcesConfig.CameraViewReference,
+                    CharacterTransform = characterTransform,
 
                     OnCameraInitialized = _onCameraInitialized,
                     OnPressedKeyW = _onPressedKeyW,

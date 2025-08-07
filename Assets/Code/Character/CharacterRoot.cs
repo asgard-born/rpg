@@ -20,6 +20,7 @@ namespace Character
             public float RunningSpeed;
 
             public ReactiveProperty<Vector3> RawMovePoint;
+            public ReactiveCommand<Transform> OnCharacterInitialized;
             public ReactiveCommand<Vector3> OnStartMovingToTarget;
             public ReactiveCommand OnTargetReached;
         }
@@ -36,6 +37,8 @@ namespace Character
             await CreateViewAsync();
             InitializeMovements();
             InitializeAnimator();
+            
+            _ctx.OnCharacterInitialized?.Execute(_view.transform);
         }
 
         private async UniTask CreateViewAsync()

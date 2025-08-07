@@ -16,7 +16,8 @@ namespace CameraLogic
         {
             public CameraConfig Config;
             public LayerMask GroundLayer;
-            public Transform Transform;
+            public Transform CameraTransform;
+            public Transform CharacterTransform;
 
             public ReactiveCommand OnPressedKeyW;
             public ReactiveCommand OnPressedKeyA;
@@ -29,8 +30,14 @@ namespace CameraLogic
         public CameraMovementPm(Ctx ctx)
         {
             _ctx = ctx;
-            _currentHeight = _targetHeight = _ctx.Transform.position.y;
+            InitFirstPosition();
             InitializeRx();
+        }
+
+        private void InitFirstPosition()
+        {
+            _currentHeight = _targetHeight = _ctx.CameraTransform.position.y;
+            UpdateVerticalMovement();
         }
 
         private void InitializeRx()
@@ -41,26 +48,40 @@ namespace CameraLogic
             AddUnsafe(_ctx.OnPressedKeyD.Subscribe(_ => MoveHorizontal(Vector3.right)));
             AddUnsafe(_ctx.OnScrollUp.Subscribe(_ => AddVerticalStep(_ctx.Config.VerticalStep)));
             AddUnsafe(_ctx.OnScrollDown.Subscribe(_ => AddVerticalStep(-_ctx.Config.VerticalStep)));
-            
+
             AddUnsafe(Observable.EveryLateUpdate().Subscribe(_ => UpdateVerticalMovement()));
         }
 
         private void MoveHorizontal(Vector3 direction)
         {
-            Vector3 localDirection = _ctx.Transform.TransformDirection(direction);
+            Vector3 localDirection = _ctx.CameraTransform.TransformDirection(direction);
             localDirection.y = 0;
             localDirection.Normalize();
 
-            _ctx.Transform.position += localDirection * _ctx.Config.MovingSpeed * Time.deltaTime;
+            Vector3 newPosition = _ctx.CameraTransform.position + localDirection * _ctx.Config.MovingSpeed * Time.deltaTime;
+
+            Vector3 offsetXZ = newPosition - _ctx.CharacterTransform.position;
+            offsetXZ.y = 0;
+
+            if (offsetXZ.magnitude > _ctx.Config.MaxDistanceFromPlayerXZ)
+            {
+                offsetXZ = offsetXZ.normalized * _ctx.Config.MaxDistanceFromPlayerXZ;
+                newPosition = _ctx.CharacterTransform.position + offsetXZ;
+                newPosition.y = _ctx.CameraTransform.position.y;
+            }
+
+            _ctx.CameraTransform.position = newPosition;
         }
-        
+
         private void AddVerticalStep(float step)
         {
             _targetHeight += step;
         }
-        
+
         private void UpdateVerticalMovement()
         {
+            _targetHeight = CalculateClampedHeight();
+
             _currentHeight = Mathf.SmoothDamp(
                 _currentHeight,
                 _targetHeight,
@@ -68,19 +89,27 @@ namespace CameraLogic
                 _ctx.Config.VerticalSmoothTime
             );
 
-            Vector3 newPosition = _ctx.Transform.position;
+            Vector3 newPosition = _ctx.CameraTransform.position;
             newPosition.y = _currentHeight;
-            _ctx.Transform.position = newPosition;
+            _ctx.CameraTransform.position = newPosition;
         }
 
-        private Vector3 FindGroundPoint()
+        private float CalculateClampedHeight()
         {
-            if (Physics.Raycast(_ctx.Transform.position, Vector3.down, out RaycastHit hit, _ctx.Config.RayDistance, _ctx.GroundLayer))
+            if (Physics.SphereCast(
+                    _ctx.CameraTransform.position + Vector3.up * _ctx.Config.CheckingSphereRadius,
+                    _ctx.Config.CheckingSphereRadius,
+                    Vector3.down,
+                    out RaycastHit hit,
+                    Mathf.Infinity,
+                    _ctx.GroundLayer))
             {
-                return hit.point;
+                float relativeHeight = Mathf.Abs(hit.point.y - _targetHeight);
+                relativeHeight = Mathf.Clamp(relativeHeight, _ctx.Config.MinHeight, _ctx.Config.MaxHeight);
+                return hit.point.y + relativeHeight;
             }
 
-            return _ctx.Transform.position - Vector3.up * _currentHeight;
+            return _targetHeight;
         }
     }
 }

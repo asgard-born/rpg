@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 namespace Configs
@@ -8,15 +7,10 @@ namespace Configs
     {
         public float MovingSpeed = 5f;
         public float VerticalStep = 2f;
-        public float MaxDistanceFromGround = 12f;
-        public float MinDistanceFromGround = 6f;
+        public float MaxHeight = 12f;
+        public float MinHeight = 6f;
+        public float CheckingSphereRadius = 5f;
         public float VerticalSmoothTime = .15f;
-        
-        [NonSerialized] public float RayDistance;
-
-        private void OnValidate()
-        {
-            RayDistance = MaxDistanceFromGround + 1;
-        }
+        public float MaxDistanceFromPlayerXZ = 20f;
     }
 }
