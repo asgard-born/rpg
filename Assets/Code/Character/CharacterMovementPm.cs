@@ -36,7 +36,19 @@ namespace Character
             {
                 _isRunning = true;
                 _ctx.NavMeshAgent.SetDestination(navHit.position);
-                _ctx.OnStartMovingToTarget?.Execute(navHit.position);
+                _ctx.NavMeshAgent.isStopped = false;
+
+                NavMeshPath path = new NavMeshPath();
+
+                if (_ctx.NavMeshAgent.CalculatePath(navHit.position, path))
+                {
+                    Vector3 finalPosition = path.corners.Length > 0
+                        ? path.corners[path.corners.Length - 1]
+                        : navHit.position;
+
+                    _isRunning = true;
+                    _ctx.OnStartMovingToTarget?.Execute(finalPosition);
+                }
             }
             else
             {
