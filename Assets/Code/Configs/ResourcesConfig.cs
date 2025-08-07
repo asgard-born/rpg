@@ -1,3 +1,4 @@
+using Navigation;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 
@@ -8,5 +9,6 @@ namespace Configs
     {
         public AssetReference CharacterViewReference;
         public AssetReference CameraViewReference;
+        public NavigationArrows NavigationArrowsPrefab;
     }
 }

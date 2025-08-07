@@ -17,6 +17,7 @@ namespace Character
             public float RunningSpeed;
 
             public ReactiveProperty<Vector3> RawMovePoint;
+            public ReactiveCommand<Vector3> OnStartMovingToTarget;
             public ReactiveCommand OnTargetReached;
         }
 
@@ -31,10 +32,11 @@ namespace Character
 
         private void TryMoveToPoint(Vector3 target)
         {
-            if (NavMesh.SamplePosition(target, out NavMeshHit hit, 5.0f, NavMesh.AllAreas))
+            if (NavMesh.SamplePosition(target, out NavMeshHit navHit, 5.0f, NavMesh.AllAreas))
             {
                 _isRunning = true;
-                _ctx.NavMeshAgent.SetDestination(hit.position);
+                _ctx.NavMeshAgent.SetDestination(navHit.position);
+                _ctx.OnStartMovingToTarget?.Execute(navHit.position);
             }
             else
             {

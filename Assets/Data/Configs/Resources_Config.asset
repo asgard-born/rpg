@@ -24,3 +24,4 @@ MonoBehaviour:
     m_SubObjectType: 
     m_SubObjectGUID: 
     m_EditorAssetChanged: 0
+  NavigationArrowsPrefab: {fileID: -6321780748873319174, guid: 135c9dcc1d7635e408b1b7fac4f61413, type: 3}

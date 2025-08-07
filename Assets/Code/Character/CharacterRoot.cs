@@ -20,6 +20,7 @@ namespace Character
             public float RunningSpeed;
 
             public ReactiveProperty<Vector3> RawMovePoint;
+            public ReactiveCommand<Vector3> OnStartMovingToTarget;
             public ReactiveCommand OnTargetReached;
         }
 
@@ -59,6 +60,7 @@ namespace Character
                 NavMeshAgent = navMeshAgent,
 
                 RawMovePoint = _ctx.RawMovePoint,
+                OnStartMovingToTarget = _ctx.OnStartMovingToTarget,
                 OnTargetReached = _ctx.OnTargetReached
             }));
         }
@@ -75,7 +77,9 @@ namespace Character
 
             AddUnsafe(new CharacterAnimatorPm(new CharacterAnimatorPm.Ctx
             {
-                Animator = animator
+                Animator = animator,
+                OnStartMovingToTarget = _ctx.OnStartMovingToTarget,
+                OnTargetReached = _ctx.OnTargetReached,
             }));
         }
     }

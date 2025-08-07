@@ -26,6 +26,7 @@ namespace Root
         #endregion
 
         private ReactiveProperty<Vector3> _rawMovePoint;
+        private ReactiveCommand<Vector3> _onStartMovingToTarget;
         private ReactiveCommand _onTargetReached;
         private ReactiveCommand<Camera> _onCameraInitialized;
 
@@ -34,7 +35,7 @@ namespace Root
             public ResourcesConfig ResourcesConfig;
             public CharacterConfig CharacterConfig;
             public CameraConfig CameraConfig;
-            
+
             public Transform CharacterSpawnPoint;
             public Transform CameraSpawnPoint;
             public NavigationConfig NavigationConfig;
@@ -61,6 +62,7 @@ namespace Root
             _onPressedKeyD = AddUnsafe(new ReactiveCommand());
 
             _rawMovePoint = AddUnsafe(new ReactiveProperty<Vector3>());
+            _onStartMovingToTarget = AddUnsafe(new ReactiveCommand<Vector3>());
             _onTargetReached = AddUnsafe(new ReactiveCommand());
             _onCameraInitialized = AddUnsafe(new ReactiveCommand<Camera>());
 
@@ -91,8 +93,9 @@ namespace Root
                     ViewReference = _ctx.ResourcesConfig.CharacterViewReference,
                     CharacterSpawnPoint = _ctx.CharacterSpawnPoint,
                     RunningSpeed = _ctx.CharacterConfig.RunningSpeed,
-                    
+
                     RawMovePoint = _rawMovePoint,
+                    OnStartMovingToTarget = _onStartMovingToTarget,
                     OnTargetReached = _onTargetReached,
                 }));
         }
@@ -106,7 +109,7 @@ namespace Root
                     GroundLayer = _ctx.NavigationConfig.GroundLayer,
                     CameraSpawnPoint = _ctx.CameraSpawnPoint,
                     ViewReference = _ctx.ResourcesConfig.CameraViewReference,
-                    
+
                     OnCameraInitialized = _onCameraInitialized,
                     OnPressedKeyW = _onPressedKeyW,
                     OnPressedKeyA = _onPressedKeyA,
@@ -123,7 +126,7 @@ namespace Root
             {
                 Config = _ctx.NavigationConfig,
                 Camera = camera,
-                
+
                 OnLeftMouseButtonDown = _onLeftMouseButtonDown,
                 RawMovePoint = _rawMovePoint
             }));
