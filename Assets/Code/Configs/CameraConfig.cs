@@ -11,6 +11,8 @@ namespace Configs
         public float MaxDistanceFromGround = 12f;
         public float MinDistanceFromGround = 6f;
         public LayerMask GroungMask;
+        public float VerticalSmoothTime = .15f;
+        
         [NonSerialized] public float RayDistance;
 
         private void OnValidate()

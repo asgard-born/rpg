@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: CameraConfig
   m_EditorClassIdentifier: 
   MovingSpeed: 5
-  VerticalStep: 2
+  VerticalStep: 0.6
   MaxDistanceFromGround: 12
   MinDistanceFromGround: 6
   GroungMask:

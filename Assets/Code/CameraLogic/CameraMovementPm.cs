@@ -9,6 +9,8 @@ namespace CameraLogic
     {
         private readonly Ctx _ctx;
         private float _currentHeight;
+        private float _targetHeight;
+        private float _verticalVelocity;
 
         public class Ctx
         {
@@ -26,7 +28,7 @@ namespace CameraLogic
         public CameraMovementPm(Ctx ctx)
         {
             _ctx = ctx;
-
+            _currentHeight = _targetHeight = _ctx.Transform.position.y;
             InitializeRx();
         }
 
@@ -36,19 +38,48 @@ namespace CameraLogic
             AddUnsafe(_ctx.OnPressedKeyS.Subscribe(_ => MoveHorizontal(Vector3.back)));
             AddUnsafe(_ctx.OnPressedKeyA.Subscribe(_ => MoveHorizontal(Vector3.left)));
             AddUnsafe(_ctx.OnPressedKeyD.Subscribe(_ => MoveHorizontal(Vector3.right)));
-
-            AddUnsafe(_ctx.OnScrollUp.Subscribe(_ => MoveVertical(_ctx.Config.VerticalStep)));
-            AddUnsafe(_ctx.OnScrollDown.Subscribe(_ => MoveVertical(-_ctx.Config.VerticalStep)));
+            AddUnsafe(_ctx.OnScrollUp.Subscribe(_ => AddVerticalStep(_ctx.Config.VerticalStep)));
+            AddUnsafe(_ctx.OnScrollDown.Subscribe(_ => AddVerticalStep(-_ctx.Config.VerticalStep)));
+            
+            AddUnsafe(Observable.EveryLateUpdate().Subscribe(_ => UpdateVerticalMovement()));
         }
 
         private void MoveHorizontal(Vector3 direction)
         {
-            _ctx.Transform.position += direction * _ctx.Config.MovingSpeed * Time.deltaTime;
+            Vector3 localDirection = _ctx.Transform.TransformDirection(direction);
+            localDirection.y = 0;
+            localDirection.Normalize();
+
+            _ctx.Transform.position += localDirection * _ctx.Config.MovingSpeed * Time.deltaTime;
+        }
+        
+        private void AddVerticalStep(float step)
+        {
+            _targetHeight += step;
+        }
+        
+        private void UpdateVerticalMovement()
+        {
+            _currentHeight = Mathf.SmoothDamp(
+                _currentHeight,
+                _targetHeight,
+                ref _verticalVelocity,
+                _ctx.Config.VerticalSmoothTime
+            );
+
+            Vector3 newPosition = _ctx.Transform.position;
+            newPosition.y = _currentHeight;
+            _ctx.Transform.position = newPosition;
         }
 
-        private void MoveVertical(float step)
+        private Vector3 FindGroundPoint()
         {
-            _ctx.Transform.position += Vector3.up * step;
+            if (Physics.Raycast(_ctx.Transform.position, Vector3.down, out RaycastHit hit, _ctx.Config.RayDistance, _ctx.Config.GroungMask))
+            {
+                return hit.point;
+            }
+
+            return _ctx.Transform.position - Vector3.up * _currentHeight;
         }
     }
 }
