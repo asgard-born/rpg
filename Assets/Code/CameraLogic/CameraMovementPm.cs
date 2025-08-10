@@ -46,8 +46,8 @@ namespace CameraLogic
             AddUnsafe(_ctx.OnPressedKeyS.Subscribe(_ => MoveHorizontal(Vector3.back)));
             AddUnsafe(_ctx.OnPressedKeyA.Subscribe(_ => MoveHorizontal(Vector3.left)));
             AddUnsafe(_ctx.OnPressedKeyD.Subscribe(_ => MoveHorizontal(Vector3.right)));
-            AddUnsafe(_ctx.OnScrollUp.Subscribe(_ => AddVerticalStep(_ctx.Config.VerticalStep)));
-            AddUnsafe(_ctx.OnScrollDown.Subscribe(_ => AddVerticalStep(-_ctx.Config.VerticalStep)));
+            AddUnsafe(_ctx.OnScrollUp.Subscribe(_ => AddVerticalStep(-_ctx.Config.VerticalStep)));
+            AddUnsafe(_ctx.OnScrollDown.Subscribe(_ => AddVerticalStep(_ctx.Config.VerticalStep)));
 
             AddUnsafe(Observable.EveryLateUpdate().Subscribe(_ => UpdateVerticalMovement()));
         }

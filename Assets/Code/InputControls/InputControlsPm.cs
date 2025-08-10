@@ -34,11 +34,11 @@ namespace InputControls
 
             if (Input.GetAxis("Mouse ScrollWheel") > 0f)
             {
-                _ctx.OnScrollDown?.Execute();
+                _ctx.OnScrollUp?.Execute();
             }
             else if (Input.GetAxis("Mouse ScrollWheel") < 0f)
             {
-                _ctx.OnScrollUp?.Execute();
+                _ctx.OnScrollDown?.Execute();
             }
 
             if (Input.GetKey(KeyCode.W))
