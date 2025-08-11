@@ -16,6 +16,6 @@ MonoBehaviour:
   VerticalStep: 0.6
   MaxHeight: 14
   MinHeight: 7
-  CheckingSphereRadius: 10
+  CheckingSphereRadius: 3
   VerticalSmoothTime: 0.2
   MaxDistanceFromPlayerXZ: 25

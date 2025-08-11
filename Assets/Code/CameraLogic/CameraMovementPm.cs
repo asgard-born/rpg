@@ -9,7 +9,7 @@ namespace CameraLogic
     {
         private readonly Ctx _ctx;
         private float _currentHeight;
-        private float _targetHeight;
+        private float _targetHeightOffset;
         private float _verticalVelocity;
 
         public class Ctx
@@ -36,7 +36,9 @@ namespace CameraLogic
 
         private void InitFirstPosition()
         {
-            _currentHeight = _targetHeight = _ctx.CameraTransform.position.y;
+            _targetHeightOffset = _ctx.CameraTransform.position.y - _ctx.CharacterTransform.position.y;
+            _currentHeight = _ctx.CameraTransform.position.y;
+            
             UpdateVerticalMovement();
         }
 
@@ -60,6 +62,12 @@ namespace CameraLogic
 
             Vector3 newPosition = _ctx.CameraTransform.position + localDirection * _ctx.Config.MovingSpeed * Time.deltaTime;
 
+            _ctx.CameraTransform.position = newPosition;
+            // CorrectCameraBorders(newPosition);
+        }
+
+        private void CorrectCameraBorders(Vector3 newPosition)
+        {
             Vector3 offsetXZ = newPosition - _ctx.CharacterTransform.position;
             offsetXZ.y = 0;
 
@@ -75,16 +83,17 @@ namespace CameraLogic
 
         private void AddVerticalStep(float step)
         {
-            _targetHeight += step;
+            _targetHeightOffset += step;
+            _targetHeightOffset = Mathf.Clamp(_targetHeightOffset, _ctx.Config.MinHeight, _ctx.Config.MaxHeight);
         }
 
         private void UpdateVerticalMovement()
         {
-            _targetHeight = CalculateClampedHeight();
+            var targetHeight = CalculateClampedHeight();
 
             _currentHeight = Mathf.SmoothDamp(
                 _currentHeight,
-                _targetHeight,
+                targetHeight,
                 ref _verticalVelocity,
                 _ctx.Config.VerticalSmoothTime
             );
@@ -96,6 +105,8 @@ namespace CameraLogic
 
         private float CalculateClampedHeight()
         {
+            float targetHeight = _ctx.CharacterTransform.position.y + _targetHeightOffset;
+
             if (Physics.SphereCast(
                     _ctx.CameraTransform.position + Vector3.up * _ctx.Config.CheckingSphereRadius,
                     _ctx.Config.CheckingSphereRadius,
@@ -104,12 +115,10 @@ namespace CameraLogic
                     Mathf.Infinity,
                     _ctx.GroundLayer))
             {
-                float relativeHeight = Mathf.Abs(hit.point.y - _targetHeight);
-                relativeHeight = Mathf.Clamp(relativeHeight, _ctx.Config.MinHeight, _ctx.Config.MaxHeight);
-                return hit.point.y + relativeHeight;
+                targetHeight = Mathf.Max(targetHeight, hit.point.y + _ctx.Config.MinHeight);
             }
 
-            return _targetHeight;
+            return targetHeight;
         }
     }
 }
