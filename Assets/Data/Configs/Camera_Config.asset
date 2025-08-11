@@ -15,12 +15,12 @@ MonoBehaviour:
   MovingSpeed: 10
   VerticalStep: 0.6
   MaxHeight: 14
-  MinHeight: 5
-  CheckingSphereRadius: 14
+  MinHeight: 6
+  CheckingSphereRadius: 8
   VerticalSmoothTime: 0.2
   MaxDistanceFromPlayerXZ: 25
   MapBorders:
-    _minX: 9
+    _minX: 18
     _maxX: 86
     _minZ: 22
     _maxZ: 95.4
