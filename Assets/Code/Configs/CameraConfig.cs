@@ -1,3 +1,4 @@
+using CameraLogic;
 using UnityEngine;
 
 namespace Configs
@@ -12,5 +13,6 @@ namespace Configs
         public float CheckingSphereRadius = 5f;
         public float VerticalSmoothTime = .15f;
         public float MaxDistanceFromPlayerXZ = 20f;
+        public CameraBorders MapBorders;
     }
 }

@@ -38,7 +38,7 @@ namespace CameraLogic
         {
             _targetHeightOffset = _ctx.CameraTransform.position.y - _ctx.CharacterTransform.position.y;
             _currentHeight = _ctx.CameraTransform.position.y;
-            
+
             UpdateVerticalMovement();
         }
 
@@ -62,23 +62,15 @@ namespace CameraLogic
 
             Vector3 newPosition = _ctx.CameraTransform.position + localDirection * _ctx.Config.MovingSpeed * Time.deltaTime;
 
-            _ctx.CameraTransform.position = newPosition;
-            // CorrectCameraBorders(newPosition);
+            _ctx.CameraTransform.position = ClampCameraPosition(newPosition);
         }
 
-        private void CorrectCameraBorders(Vector3 newPosition)
+        private Vector3 ClampCameraPosition(Vector3 newPosition)
         {
-            Vector3 offsetXZ = newPosition - _ctx.CharacterTransform.position;
-            offsetXZ.y = 0;
+            float clampedX = Mathf.Clamp(newPosition.x, _ctx.Config.MapBorders.MinX, _ctx.Config.MapBorders.MaxX);
+            float clampedZ = Mathf.Clamp(newPosition.z, _ctx.Config.MapBorders.MinZ, _ctx.Config.MapBorders.MaxZ);
 
-            if (offsetXZ.magnitude > _ctx.Config.MaxDistanceFromPlayerXZ)
-            {
-                offsetXZ = offsetXZ.normalized * _ctx.Config.MaxDistanceFromPlayerXZ;
-                newPosition = _ctx.CharacterTransform.position + offsetXZ;
-                newPosition.y = _ctx.CameraTransform.position.y;
-            }
-
-            _ctx.CameraTransform.position = newPosition;
+            return new Vector3(clampedX, newPosition.y, clampedZ);
         }
 
         private void AddVerticalStep(float step)
