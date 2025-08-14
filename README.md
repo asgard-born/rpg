@@ -1,8 +1,10 @@
-# CRPG Camera and Movement
+# Камера и Передвижение
 
-The project demonstrates an example of CRPG DivinityOS 2/Baldurs Gate 3 like camera and character movement using Navigation Mesh Unity Package.
+Игра с видом сверху, где игрок управляет персонажем, перемещая его по клику мыши, и может свободно двигать камеру с помощью клавиш WASD. Камера автоматически адаптируется к рельефу местности, поднимаясь на возвышенностях и опускаясь в низинах, сохраняя плавность и удобство обзора.
 
-Camera Features:
-- Moving and rotating
-- Dynamic height calculation in lowlands / uplands
-- Obstacle avoidance to avoid the camera getting under the landscape
+Управление
+Левый клик мыши — переместить персонажа в указанную точку.
+
+Клавиши WASD — перемещение камеры в соответствующем направлении.
+
+Колесико мыши — приближение/отдаление камеры
